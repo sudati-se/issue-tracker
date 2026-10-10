@@ -1,15 +1,15 @@
 package com.example.issue_tracker;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
 
     @GetMapping("/")
-    @ResponseBody
-    public String home() {
-        return "Issue Tracker is running!";
+    public String home(Model model) {
+        model.addAttribute("pageTitle", "問い合わせ・不具合管理");
+        return "index";
     }
 }
