@@ -3,8 +3,8 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">問い合わせ・不具合管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>問い合わせ・不具合管理</title>
     <style>
         body {
             font-family: sans-serif;
@@ -14,57 +14,59 @@
             color: #333;
             background: #f5f7fa;
         }
-
-        h1 {
-            margin-bottom: 8px;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
         }
-
-        .description {
-            color: #666;
-            margin-bottom: 28px;
+        .button {
+            display: inline-block;
+            padding: 10px 16px;
+            color: white;
+            background: #2563eb;
+            text-decoration: none;
+            border-radius: 5px;
         }
-
         .panel {
             background: white;
             padding: 24px;
-            border-radius: 8px;
             border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 24px;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 16px;
         }
-
         th, td {
             text-align: left;
             padding: 12px;
             border-bottom: 1px solid #eee;
         }
-
         th {
             background: #f5f7fa;
         }
-
-        .status {
-            color: #8a5a00;
-            background: #fff1cc;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 13px;
+        .empty {
+            padding: 24px;
+            color: #666;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-<h1 th:text="${pageTitle}">問い合わせ・不具合管理</h1>
-<p class="description">
-    問い合わせと不具合の対応状況を管理するWebアプリです。
-</p>
+<div class="header">
+    <div>
+        <h1>問い合わせ・不具合管理</h1>
+        <p>問い合わせと不具合の対応状況を管理します。</p>
+    </div>
+    <a class="button" th:href="@{/inquiries/new}">
+        新規登録
+    </a>
+</div>
 
 <section class="panel">
     <h2>問い合わせ一覧</h2>
-    <p>現在は画面の動作確認用データを表示しています。</p>
 
     <table>
         <thead>
@@ -73,20 +75,24 @@
             <th>件名</th>
             <th>優先度</th>
             <th>ステータス</th>
+            <th>登録日時</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>1</td>
-            <td>ログインできない</td>
-            <td>高</td>
-            <td><span class="status">未対応</span></td>
+        <tr th:each="inquiry : ${inquiries}">
+            <td th:text="${inquiry.id}"></td>
+            <td th:text="${inquiry.title}"></td>
+            <td th:text="${inquiry.priority == 'HIGH' ? '高' :
+                        (inquiry.priority == 'LOW' ? '低' : '中')}"></td>
+            <td th:text="${inquiry.status == 'OPEN' ? '未対応' :
+                        (inquiry.status == 'IN_PROGRESS' ? '対応中' : '完了')}"></td>
+            <td th:text="${#temporals.format(
+                        inquiry.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>画面表示が崩れる</td>
-            <td>中</td>
-            <td><span class="status">対応中</span></td>
+        <tr th:if="${#lists.isEmpty(inquiries)}">
+            <td colspan="5" class="empty">
+                問い合わせはまだ登録されていません。
+            </td>
         </tr>
         </tbody>
     </table>
